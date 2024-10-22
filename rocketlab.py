@@ -718,7 +718,14 @@ class trayectory:
         plt.show()
 
 class rocket():
+    class SimulationResults:
+        def __init__(self, results):
+            self.results = results
 
+        def __str__(self):
+            results_str = "\n".join([f"{key}: {value:.3f}" for key, value in self.results.items()])
+            return f"Simulation Results:\n{results_str}"
+        
     def __init__(self, parameters):
         self.set_parameters(parameters) # Set all parameters as class attributes dynamically
 
@@ -730,6 +737,8 @@ class rocket():
 
         self.initialize_trajectory(dt_min)                 # Initialize trajectory module
         self.initialize_engine(dt_min)                     # Initialize engine module
+
+        self.simulation()                                  # Starts a simulation
 
     def set_parameters(self, parameters):
         """Set all parameters as class attributes dynamically."""
@@ -789,8 +798,7 @@ class rocket():
                                               E=self.rocket_engine.E_t[-1], Cd=0.5, M=self.rocket_engine.Mp_t[-1]+self.Mi)
             if self.rocket_trayectory.flag_stop_condition(self.stop_condition): break 
 
-        self.results_2_csv()
-
+        self.results()
 
     def graphs(self):
         """
@@ -821,8 +829,15 @@ class rocket():
         h_max = np.max(self.rocket_trayectory.h_t)
         M_total = self.M0
         sigma_r = self.stress_analysis()
-        return {'h_max': h_max, 'M_total': M_total, 'sigma_r': sigma_r}
+        
+        results = {'h_max': h_max, 'M_total': M_total, 'sigma_r': sigma_r}
+        self.simulation_results = self.SimulationResults(results)
+        return results
 
+    def __str__(self):
+        results_str = "\n".join([f"{key}: {value:.3f}" for key, value in self.simulation_results.items()])
+        return f"RocketSimulation Results:\n{results_str}"
+    
 if __name__ == '__main__':  
      #/ EXAMPLE OF USE
 
