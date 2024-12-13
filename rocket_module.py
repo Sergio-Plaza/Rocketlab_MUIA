@@ -178,3 +178,4 @@ if __name__ == '__main__':
     r = rocket(parameters)
     r.simulation()
     r.graphs()
+    r.results_2_csv()
